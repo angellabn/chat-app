@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Chat App</title>
+  <style>
+    body { font-family: sans-serif; margin: 40px; }
+    #messages { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; margin-bottom: 10px; }
+    #input { width: 80%; }
+    #send { width: 18%; }
+  </style>
+</head>
+<body>
+
+  <h2>Chat App</h2>
+  <div id="messages"></div>
+  <input id="input" placeholder="Type a message..." />
+  <button id="send">Send</button>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
+  
+  <script>
+    // 👇 Paste your Firebase config here 👇
+    const firebaseConfig = {
+  apiKey: "AIzaSyBmPSaePtrlOch9gRHWtQCdBoCJYRhUMkU",
+  authDomain: "chat-app-wow.firebaseapp.com",
+  projectId: "chat-app-wow",
+  storageBucket: "chat-app-wow.firebasestorage.app",
+  messagingSenderId: "1097599583270",
+  appId: "1:1097599583270:web:0e6d6536824de1786612e7",
+  measurementId: "G-4ZRCP10JBG"
+};
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Add message to database
+    document.getElementById("send").addEventListener("click", () => {
+      const message = document.getElementById("input").value;
+      if (message.trim() !== "") {
+        db.ref("messages").push({ text: message });
+        document.getElementById("input").value = "";
+      }
+    });
+
+    // Listen for new messages
+    db.ref("messages").on("child_added", snapshot => {
+      const msg = snapshot.val().text;
+      const p = document.createElement("p");
+      p.textContent = msg;
+      document.getElementById("messages").appendChild(p);
+      document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
+    });
+  </script>
+</body>
+</html>
